@@ -257,23 +257,27 @@ uint8_t GPIO_Read_pin(GPIO_Port_Select GPPS, uint32_t pin){
 //EXAMPLE Activate RGB PORTF
 void RGB_PORTF_Activate(LED_COLOR_PORTF COLOR)
 {
-	GPIO_Init(PORTF) ;
-	if (COLOR == RED)
-	{
-	GPIO_Digital_INIT(PORTF,PIN_1);
-	GPIO_Digital_PIN_MODE(PORTF,PIN_1,Output,2);
-	GPIO_Write_Pin(PORTF,PIN_1,Clear);
-	}
-	else if (COLOR == BLUE)
-	{
-	GPIO_Digital_INIT(PORTF,PIN_2);
-	GPIO_Digital_PIN_MODE(PORTF,PIN_2,Output,2);
-	GPIO_Write_Pin(PORTF,PIN_2,Clear);
-	}
-	else if (COLOR == GREEN)
-	{
-	GPIO_Digital_INIT(PORTF,PIN_3);
-	GPIO_Digital_PIN_MODE(PORTF,PIN_3,Output,2);
-	GPIO_Write_Pin(PORTF,PIN_3,Clear);
-	}
+    // Deactivate all colors before activating the new one
+    GPIO_Write_Pin(PORTF, PIN_1, Set);  // RED
+    GPIO_Write_Pin(PORTF, PIN_2, Set);  // BLUE
+    GPIO_Write_Pin(PORTF, PIN_3, Set);  // GREEN
+
+    if (COLOR == RED)
+    {
+        GPIO_Digital_INIT(PORTF, PIN_1);
+        GPIO_Digital_PIN_MODE(PORTF, PIN_1, Output, 2);
+        GPIO_Write_Pin(PORTF, PIN_1, Clear); // Activate RED
+    }
+    else if (COLOR == BLUE)
+    {
+        GPIO_Digital_INIT(PORTF, PIN_2);
+        GPIO_Digital_PIN_MODE(PORTF, PIN_2, Output, 2);
+        GPIO_Write_Pin(PORTF, PIN_2, Clear); // Activate BLUE
+    }
+    else if (COLOR == GREEN)
+    {
+        GPIO_Digital_INIT(PORTF, PIN_3);
+        GPIO_Digital_PIN_MODE(PORTF, PIN_3, Output, 2);
+        GPIO_Write_Pin(PORTF, PIN_3, Clear); // Activate GREEN
+    }
 }
