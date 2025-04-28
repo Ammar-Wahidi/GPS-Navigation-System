@@ -1,0 +1,44 @@
+1. Enable Port
+c
+Copy
+Edit
+GPIO_Init(PORT);
+2. Initialize Pin for Digital I/O
+c
+Copy
+Edit
+GPIO_Digital_INIT(PORT, PIN);
+3. Set Pin Mode (Input/Output)
+c
+Copy
+Edit
+// As Output
+GPIO_Digital_PIN_MODE(PORT, PIN, 1, 0);
+
+// As Input with Pull-Up
+GPIO_Digital_PIN_MODE(PORT, PIN, 0, 0);
+
+// As Input with Pull-Down
+GPIO_Digital_PIN_MODE(PORT, PIN, 0, 1);
+
+// As Input without Pull
+GPIO_Digital_PIN_MODE(PORT, PIN, 0, 2);
+4. Write to Pin
+c
+Copy
+Edit
+GPIO_Write_Pin(PORT, PIN, 1); // HIGH
+GPIO_Write_Pin(PORT, PIN, 0); // LOW
+5. Read from Pin
+c
+Copy
+Edit
+uint8_t value = GPIO_Read_pin(PORT, PIN);
+Example to Follow
+✅ RGB_PORTF_Activate() is provided as an example only.
+✅ Follow same steps for any port and any pin.
+
+Quick Reminder:
+Always Init Port ➔ Init Pin ➔ Set Mode before using it.
+
+Pull-Up or Pull-Down resistors are important for inputs.
