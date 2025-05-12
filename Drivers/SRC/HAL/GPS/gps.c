@@ -1,8 +1,5 @@
 #include "../../../Headers/HAL/GPS/gps.h"
-// Converts degrees to radians
-static float deg2rad(float deg) {
-    return deg * (M_PI / 180.0f);
-}
+#include "../../../Headers/MCAL/UART/UART.h"
 
 bool validate_GPRMC_string(const char* GPRMC_String) {
     if (!GPRMC_String) return false;
@@ -28,7 +25,7 @@ bool validate_GPRMC_checksum(const char* GPRMC_String) {
     return (expected_checksum == calculated_checksum);
 }
 
-bool is_GPRMC_data_valid(const char* GPRMC_String) {
+bool is_GPRMC_data_valid(char* GPRMC_String) {
     int index = 0;
     int commas = 0;
 
@@ -44,7 +41,7 @@ bool is_GPRMC_data_valid(const char* GPRMC_String) {
     return false; // Data is Void (invalid)
 }
 
-void get_Time(const char* GPRMC_String, char* Time_Buffer) {
+void get_Time(char* GPRMC_String, char* Time_Buffer) {
 
     int index = 0;
     int commas = 0;
@@ -76,10 +73,10 @@ void get_Time(const char* GPRMC_String, char* Time_Buffer) {
     sprintf(Time_Buffer, "%02d:%02d:%02d", h, m, s);
 }
 
-void get_Latitude(const char* GPRMC_String, char* Latitude_Buffer) {
+void get_Latitude(char* GPRMC_String, char* Latitude_Buffer) {
     int index = 0;
     int commas = 0;
-    char lat_raw[16] = {0};
+    char lat_raw[20] = {0};
     char ns_indicator = 'N';
     int i = 0;
     float raw;
@@ -97,6 +94,8 @@ void get_Latitude(const char* GPRMC_String, char* Latitude_Buffer) {
         lat_raw[i++] = GPRMC_String[index++];
     }
     lat_raw[i] = '\0';
+		lat_raw[i+1] = '\0';
+		
 
     if (GPRMC_String[index] == ',') {
         ns_indicator = GPRMC_String[++index];
@@ -105,16 +104,21 @@ void get_Latitude(const char* GPRMC_String, char* Latitude_Buffer) {
     raw = atof(lat_raw);
     degrees = (int)(raw / 100);
     minutes = raw - (degrees * 100);
-    decimal = degrees + minutes / 60.0f;
+    decimal = degrees + minutes / 60.0;
 
     if (ns_indicator == 'S') {
         decimal *= -1;
     }
 
-    sprintf(Latitude_Buffer, "%.6f", decimal);
+    sprintf(Latitude_Buffer, "%.8f", decimal);
+				UART0_Print("\n\r");//
+		UART0_Print("lat in function :"); //
+			  UART0_Print(Latitude_Buffer); //
+		UART0_Print("\n\r"); //
 }
 
-void get_Longitude(const char* GPRMC_String, char* Longitude_Buffer) {
+void get_Longitude(char* GPRMC_String, char* Longitude_Buffer) {
+		char temp [16];
     int index = 0;
     int commas = 0;
     char lon_raw[16] = {0};
@@ -148,11 +152,11 @@ void get_Longitude(const char* GPRMC_String, char* Longitude_Buffer) {
     if (ew_indicator == 'W') {
         decimal *= -1;
     }
-
-    sprintf(Longitude_Buffer, "%.6f", decimal);
+		
+    sprintf(Longitude_Buffer, "%.8f", decimal);
 }
 
-void getSpeed(const char* GPRMC_String, char* speed_buffer) {
+void getSpeed(char* GPRMC_String, char* speed_buffer) {
     int index = 0;
     int commas = 0;
     char speed_knots[10] = {0};
@@ -172,30 +176,4 @@ void getSpeed(const char* GPRMC_String, char* speed_buffer) {
 
     speed = atof(speed_knots) * 0.514444f; // Convert knots to m/s
     sprintf(speed_buffer, "%.2f", speed);
-}
-
-float Distance(const char* lat1_str, const char* lon1_str, const char* lat2_str, const char* lon2_str) {
-    float lat1;
-    float lon1;
-    float lat2;
-    float lon2;
-    float dLat, dLon;
-    float a, c;
-
-    if (!lat1_str || !lon1_str || !lat2_str || !lon2_str) return 0.0f;
-
-    lat1 = atof(lat1_str);
-    lon1 = atof(lon1_str);
-    lat2 = atof(lat2_str);
-    lon2 = atof(lon2_str);
-
-    dLat = deg2rad(lat2 - lat1);
-    dLon = deg2rad(lon2 - lon1);
-
-    a = sin(dLat/2) * sin(dLat/2) +
-        cos(deg2rad(lat1)) * cos(deg2rad(lat2)) *
-        sin(dLon/2) * sin(dLon/2);
-    c = 2 * atan2(sqrt(a), sqrt(1 - a));
-
-    return RADIUS * c;
 }
