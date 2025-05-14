@@ -1,16 +1,18 @@
-//
-//UART.h
-//
-//
 #ifndef UART
 #define UART
 #include "../GPIO/GPIO.h"
 #include <stdint.h>
 #include "../../../Services/Bit_Utilies.h"
+#include "../../../Services/tm4c123gh6pm.h"
+#include <stdint.h>
+#include <string.h> // For strncmp, strtok, strchr
+#include <stdlib.h>
+#include <string.h>
+#include <float.h>
+#include <stddef.h>
+#include <stdlib.h>
 //////////////////////////////////////////////////////////////////////
-//UARTs' addresses and PCTL:
-//*********************************************************************
-// UART registers (UART0)
+
 
 #define UART0_DR              (*((volatile unsigned long *)0x4000C000))
 #define UART0_RSR             (*((volatile unsigned long *)0x4000C004))
@@ -293,12 +295,11 @@ typedef enum{
 }UART_Select;
 
 //Prototypes
-void UART_INIT(UART_Select U_N);
-unsigned char UART_ReadAvailable(UART_Select UART_NO);
-unsigned char UART_SendAvailable(UART_Select UART_NO);
-void UART_SendChar(UART_Select UART_NO , uint8_t Data);
-uint8_t UART_ReadChar(UART_Select UART_NO);
-void UART_SendString(UART_Select UART_NO, uint8_t *str);
-void UART_ReadString(uint8_t UART_NO, uint8_t *buffer);
+void UART0_Init(void);
+void UART2_Init(void);
+void UART0_Print(const char *buf);
+char UART2_InChar(void);
+void UART2_ReadLine(char *buffer, uint32_t max_len);
+void UART0_printFloat(float value);
 
 #endif
