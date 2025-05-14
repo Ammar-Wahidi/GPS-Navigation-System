@@ -1,0 +1,44 @@
+1. Initialize SysTick Timer
+c
+Copy
+Edit
+void SYSTICKInit() {
+    NVIC_ST_CTRL = SYSTICK_CTRL_DISABLE;       // Disable SysTick during setup
+    NVIC_ST_RELOAD = SYSTICK_RELOAD_MAX;       // Set reload register to maximum value
+    NVIC_ST_CURRENT = 0;                       // Clear the current value register
+    NVIC_ST_CTRL = SYSTICK_CTRL_ENABLE_CORECLK; // Enable SysTick with core clock and no interrupt
+}
+Initializes SysTick for core clock operation.
+
+Prepares SysTick for use without interrupt generation.
+
+2. Blocking Delay Function (Wait)
+c
+Copy
+Edit
+void SYSTICK_Wait(unsigned long delay) {
+    NVIC_ST_CTRL = SYSTICK_CTRL_DISABLE;        // Disable SysTick to configure
+    NVIC_ST_RELOAD = delay - 1;                 // Set reload register (counts down to zero)
+    NVIC_ST_CURRENT = 0;                        // Clear the current value register
+    NVIC_ST_CTRL = SYSTICK_CTRL_ENABLE_CORECLK;  // Enable SysTick with core clock
+
+    while ((NVIC_ST_CTRL & SYSTICK_COUNT_FLAG) == 0); // Wait until COUNT flag is set (timer hits 0)
+}
+Waits for a specific number of clock cycles (blocking delay).
+
+Uses SysTick timer to generate the delay.
+
+3. Millisecond Delay (Assumes 80 MHz System Clock)
+c
+Copy
+Edit
+void Generic_delay(unsigned long time) {
+    int i;
+    for (i = 0; i < time; i++) {
+        SYSTICK_Wait(80000); // 80000 cycles = 1 ms at 80 MHz
+    }
+}
+Generates a delay in milliseconds based on a system clock of 80 MHz.
+
+This function calls SYSTICK_Wait() to wait 1 ms repeatedly.
+

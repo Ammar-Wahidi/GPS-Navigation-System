@@ -1,0 +1,91 @@
+GPIO Driver - README
+This file explains the GPIO functions provided in GPIO.h.
+These functions allow easy control of any GPIO port and pin.
+
+Functions Description
+1. void GPIO_Init(GPIO_Port_Select GPPS);
+Purpose: Enable clock for the selected GPIO port.
+
+Details:
+
+Activates the clock.
+
+Waits until the port is ready.
+
+Unlocks the port (if needed).
+
+2. void GPIO_Digital_INIT(GPIO_Port_Select GPPS, uint32_t pin);
+Purpose: Prepare a pin for digital I/O.
+
+Details:
+
+Unlocks control on the pin.
+
+Disables analog functionality.
+
+Disables alternate functions.
+
+Clears the PCTL configuration (sets it to GPIO mode).
+
+Enables the digital function on the pin.
+
+3. void GPIO_Digital_PIN_MODE(GPIO_Port_Select Port, uint8_t pin, GPIO_Mode_Select Mode, GPIO_Polarity_Select Polarity);
+Purpose: Configure a pin as input or output.
+
+Parameters:
+
+Mode:
+
+1 ➔ Output
+
+0 ➔ Input
+
+Polarity (only if input):
+
+0 ➔ Enable Pull-Up resistor
+
+1 ➔ Enable Pull-Down resistor
+
+2 ➔ No Pull-Up/Pull-Down
+
+Details:
+
+Sets the pin direction and optional pull-up or pull-down resistors.
+
+4. void GPIO_Write_Pin(GPIO_Port_Select GPPS, uint32_t pin, GPIO_Write_Select data);
+Purpose: Set the pin HIGH or LOW.
+
+Parameters:
+
+data = 1 ➔ Set pin HIGH
+
+data = 0 ➔ Set pin LOW
+
+5. uint8_t GPIO_Read_pin(GPIO_Port_Select GPPS, uint32_t pin);
+Purpose: Read the current state of the pin.
+
+Returns:
+
+1 ➔ Pin is HIGH
+
+0 ➔ Pin is LOW
+
+Example: How to use these functions
+At the bottom of the file, the function RGB_PORTF_Activate(LED_COLOR_PORTF COLOR) shows a full example:
+
+✅ Enable PortF
+✅ Initialize specific pin (e.g., RED ➔ PIN_1)
+✅ Set it as output
+✅ Set initial output value
+
+This is just an example.
+
+➡️ Team members can do the same steps for any other port and any pin they need.
+
+Notes:
+Always call GPIO_Init(port) first before using a port.
+
+Always call GPIO_Digital_INIT(port, pin) before configuring mode or writing to a pin.
+
+If using input pins, make sure to set Pull-Up or Pull-Down resistors as needed.
+
