@@ -1,6 +1,6 @@
 #ifndef LCD
 #define LCD
-#include "gpio.h"
+#include "../GPIO/gpio.h"
 #include "tm4c123gh6pm.h"
 void delay(long d);
 void printdata(unsigned char data);
